@@ -1,0 +1,81 @@
+<div class="varible" style="margin-left:5%;">
+  <h3>Shopify liquid varible</h3>
+  {% assign var = "This is first variable" %}
+  {{ var}}<br>
+
+{% assign num1 = 40 %}
+{% assign num2 = 20 %}
+  {% assign add = num1|plus:num2 %}
+  {{ add|prepend:"Addition is " }}<br>
+  {% assign sub = num1|minus:num2 %}
+  {{ sub|prepend:"Substraction is " }}<br>
+  {% assign mul = num1|times:num2 %}
+  {{ mul|prepend:"Multiplication is " }}<br>
+  {% assign division = num1|divided_by:num2 %}
+  {{ division|prepend:"Division is " }}
+  
+</div>
+
+<div class="ifCondition" style="margin-left:5%;">
+  <h3>IfElse Condition</h3> 
+  {% assign val1 = 10 %}
+  {% assign val2 = 20 %}
+  
+  {% if val1 == val2 %}
+  <p>Value is equal</p>
+    {% elsif val2 == 20 %}
+    <p>Value is 20</p>
+    {% else %}
+  <p>condition faild</p>
+    {% endif %}
+
+  {% if page_title=="core-liquid" %}
+    <h2> Page title match </h2>
+   {% else %}
+    <h2> Page title not match </h2>
+    {% endif %}
+</div>
+<div class="Forloop" style="margin-left:5%;"> 
+  <h2> For Loop </h2>
+  {% for num in (1..10) %}
+  {{ num }}
+  {% endfor %}<br>
+  
+  {% for product in collections['summer-collection'].products %}
+    <h3>Product name is: {{ product.title }}</h3>
+  {% endfor %}
+</div>
+<div class="switchClass" style="margin-left:5%;">
+  <h3>Switch Case</h3>
+  {% assign color = "yellow" %}
+  {% case color %}
+    {% when "red" %}
+    Color is {{ color }}
+    {% when "pink" %}
+    Color is {{ color }}
+    {% when "green" %}
+    Color is {{ color }}
+    {% when "yellow" %}
+    Color is {{ color }}
+    {% else %}
+    Condition not valid
+  {% endcase color %}
+  
+  
+</div>
+
+{% schema %}
+  {
+    "name": "basic-liquid",
+    "settings": [],
+    "blocks": [],
+    "presets": [
+      {
+        "name": "basic-liquid"
+      }
+    ]
+  }
+
+{% endschema %}
+
+

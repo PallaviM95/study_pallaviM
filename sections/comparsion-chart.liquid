@@ -1,0 +1,728 @@
+{%- assign get = section.settings -%}
+<link rel="stylesheet" href="{{ 'comparison-chart.css' | asset_url }}" media="all">
+
+{%- style -%}
+    {%- capture styles -%}
+    .adev-compare-table#section_{{ section.id }} {
+        background: {{ get.background }};
+        padding-top: {{ get.spacing_top_mobile }}px;
+        padding-bottom: {{ get.spacing_bottom_mobile }}px;
+        --table-max-width: {{ get.table_width }}px;
+
+        --subtitle-font-weight: {{ get.subtitle_font_weight }};
+        --subtitle-text-size: {{ get.subtitle_text_size_mobile }}px;
+        --subtitle-line-height: {{ get.subtitle_line_height_mobile }};
+
+        --title-font-weight: {{ get.title_font_weight }};
+        --title-text-size: {{ get.title_text_size_mobile }}px;
+        --title-line-height: {{ get.title_line_height_mobile }};
+
+        --us-bg-color: {{ get.us_bg_color }};
+        --us-bg-color: {{ get.us_bg_color }};
+
+        --us-text-color: {{ get.us_text_color }};
+        --us-text-font-weight: {{ get.us_logo_font_weight }};
+        --us-text-size: {{ get.us_logo_text_size_mobile }}px;
+        --us-text-line-height: {{ get.us_logo_line_height_mobile }};
+        --us-logo-max-width: {{ get.us_logo_max_width_mobile }}px;
+
+        --them-text-font-weight: {{ get.them_logo_font_weight }};
+        --them-text-size: {{ get.them_logo_text_size_mobile }}px;
+        --them-text-line-height: {{ get.them_logo_line_height_mobile }};
+        --them-logo-max-width: {{ get.them_logo_max_width_mobile }}px;
+        
+
+        --them-bg-color: {{ get.them_bg_color }};
+        --them-text-color: {{ get.them_text_color }};
+        --border-color: {{ get.border_color }};
+        --subtitle-color: {{ get.subtitle_color }};
+        --title-color: {{ get.title_color }};
+        --roundness: {{ get.roundness }}px;
+
+        --items-text-font-weight: {{ get.items_text_font_weight }};
+        --items-text-size: {{ get.items_text_size_mobile }}px;
+        --items-text-line-height: {{ get.items_line_height_mobile }};
+
+    }
+
+    @media (min-width:992px) {
+        .adev-compare-table#section_{{ section.id }} {
+            padding-top: {{ get.spacing_top_desktop }}px;
+            padding-bottom: {{ get.spacing_bottom_desktop }}px;
+
+            --subtitle-text-size: {{ get.subtitle_text_size_desktop }}px;
+            --subtitle-line-height: {{ get.subtitle_line_height_desktop }};
+
+            --title-text-size: {{ get.title_text_size_desktop }}px;
+            --title-line-height: {{ get.title_line_height_desktop }};
+
+            --us-text-size: {{ get.us_logo_text_size_desktop }}px;
+            --us-text-line-height: {{ get.us_logo_line_height_desktop }};
+            --us-logo-max-width: {{ get.us_logo_max_width_desktop }}px;
+
+            --them-text-size: {{ get.them_logo_text_size_desktop }}px;
+            --them-text-line-height: {{ get.them_logo_line_height_desktop }};
+            --them-logo-max-width: {{ get.them_logo_max_width_desktop }}px;
+
+            --items-text-size: {{ get.items_text_size_desktop }}px;
+            --items-text-line-height: {{ get.items_line_height_desktop }};
+        }
+    }
+    {%- endcapture -%}
+    {{- styles | strip_newlines | remove:'  ' | remove:'  ' -}}
+{%- endstyle -%}
+
+<div class="adev-compare-table" id="section_{{ section.id | escape }}">
+    <div class="page-width">
+
+        {%- if get.title != blank or get.subtitle != blank -%}
+        <div class="adev-section-title">
+            {%- if get.subtitle != blank -%}
+                <span>{{ get.subtitle }}</span>
+            {%- endif -%}
+            {%- if get.title != blank -%}
+                <h2>{{ get.title }}</h2>
+            {%- endif -%}
+        </div>
+        {%- endif -%}
+
+        <div class="adev-ct__table">
+
+            <div class="adev-ct__thead"> 
+                <div class="adev-ct__td" data-index="1"></div>
+                <div class="adev-ct__td adev-ct__td-us{% if get.us_logo == blank %} adev-ct__has-text{% endif %}" data-index="2">
+                    {%- if get.us_logo != blank -%}
+                    <div>
+                        <img class="lazyload" draggable="false" src="{{ get.us_logo | img_url:'10x' }}" data-src="{{ get.us_logo | img_url:'250x' }}" alt="{{ get.us_logo.alt | escape }}">
+                    </div>
+                    {%- else -%}
+                        <span>{{ get.us_logo_text | default: "US" }}</span>
+                    {%- endif -%}
+                </div>
+                <div class="adev-ct__td adev-ct__td-them" data-index="3">
+                    {%- if get.them_logo != blank -%}
+                    <div>
+                        <img class="lazyload" draggable="false" src="{{ get.them_logo | img_url:'10x' }}" data-src="{{ get.them_logo | img_url:'250x' }}" alt="{{ get.them_logo.alt | escape }}">
+                    </div>
+                    {%- else -%}
+                        <span>{{ get.them_logo_text | default: "Others" }}</span>
+                    {%- endif -%}
+                </div>
+            </div>
+
+            {%- capture checkIcon -%}
+            <span class="adev-check-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M9.84 17.08a.997.997 0 0 1-.707-.293l-3.84-3.84a1 1 0 1 1 1.414-1.414l3.133 3.133l7.453-7.453a1 1 0 0 1 1.414 1.414l-8.16 8.16a.997.997 0 0 1-.707.293Z"/></svg>
+            </span>
+            {%- endcapture -%}
+
+            {%- capture uncheckIcon -%}
+            <span class="adev-uncheck-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M20 20L4 4m16 0L4 20"/></svg>
+            </span>
+            {%- endcapture -%}
+
+            {%- style -%}
+            {%- capture styles -%}
+                {%- for block in section.blocks -%}
+                {%- assign get = block.settings -%}
+                #block_{{ block.id }} {
+                    --background-color: {{ get.background_color }};
+                    --text-color: {{ get.text_color }};
+                    --us-bg-color: {{ get.us_bg_color }};
+                    --us-check-bg-color: {{ get.us_check_bg_color }};
+                    --us-check-color: {{ get.us_check_color }};
+                    --them-bg-color: {{ get.them_bg_color }};
+                    --them-check-bg-color: {{ get.them_check_bg_color }};
+                    --them-check-color: {{ get.them_check_color }};
+                }
+                {%- endfor -%}
+                {%- endcapture -%}
+                {{- styles | strip_newlines | remove:'  ' | remove:'  ' -}}
+            {%- endstyle -%}
+
+            {%- for block in section.blocks -%}
+            {%- assign get = block.settings -%}
+            <div class="adev-ct__tr" id="block_{{ block.id }}" {{ block.shopify_attributes }}>
+
+                <div class="adev-ct__td adev-ct__td-label">
+                    {{ get.title }}
+                </div>
+                <div class="adev-ct__td adev-ct__td-us">
+                    {%- if get.us_checked -%}
+                        {{ checkIcon }}
+                    {%- else -%}
+                        {{ uncheckIcon }}
+                    {%- endif -%}
+                </div>
+                <div class="adev-ct__td adev-ct__td-them">
+                    {%- if get.them_checked -%}
+                        {{ checkIcon }}
+                    {%- else -%}
+                        {{ uncheckIcon }}
+                    {%- endif -%}
+                </div>
+            </div>
+            {%- endfor -%}
+            
+
+        </div>
+        
+
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Exceedios Table",
+  "settings": [
+    {
+        "type": "color",
+        "id": "background",
+        "label": "Background",
+        "default": "#fff"
+    },
+    {
+        "type": "range",
+        "id": "table_width",
+        "label": "Table Max Width",
+        "unit": "px",
+        "min": 560,
+        "max": 1000,
+        "step": 10,
+        "default": 800
+    },
+    {
+      "type": "header",
+      "content": "Section Subtitle"
+    },
+    {
+        "type": "inline_richtext",
+        "id": "subtitle",
+        "label": "Subtitle",
+        "default": "US VS THEM"
+    },
+    {
+        "type": "color",
+        "id": "subtitle_color",
+        "label": "Subtitle Color",
+        "default": "#353956"
+    },
+    {
+        "type": "range",
+        "id": "subtitle_font_weight",
+        "label": "Font Weight",
+        "min": 100,
+        "max": 900,
+        "step": 100,
+        "default": 500
+    },
+    {
+        "type": "range",
+        "id": "subtitle_text_size_desktop",
+        "label": "Text Size (Desktop)",
+        "unit": "px",
+        "min": 7,
+        "max": 50,
+        "step": 1,
+        "default": 18
+    },
+    {
+        "type": "range",
+        "id": "subtitle_line_height_desktop",
+        "label": "Line Height (Desktop)",
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "default": 1.5
+    },
+    {
+        "type": "range",
+        "id": "subtitle_text_size_mobile",
+        "label": "Text Size (Mobile)",
+        "unit": "px",
+        "min": 7,
+        "max": 50,
+        "step": 1,
+        "default": 16
+    },
+    {
+        "type": "range",
+        "id": "subtitle_line_height_mobile",
+        "label": "Line Height (Mobile)",
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "default": 1.5
+    },
+    {
+        "type": "header",
+        "content": "Section Title"
+    },
+    {
+        "type": "inline_richtext",
+        "id": "title",
+        "label": "Title",
+        "default": "How We Compare"
+    },
+    {
+        "type": "color",
+        "id": "title_color",
+        "label": "Title Color",
+        "default": "#353956"
+    },
+    {
+        "type": "range",
+        "id": "title_font_weight",
+        "label": "Font Weight",
+        "min": 100,
+        "max": 900,
+        "step": 100,
+        "default": 600
+    },
+    {
+        "type": "range",
+        "id": "title_text_size_desktop",
+        "label": "Text Size (Desktop)",
+        "unit": "px",
+        "min": 7,
+        "max": 50,
+        "step": 1,
+        "default": 38
+    },
+    {
+        "type": "range",
+        "id": "title_line_height_desktop",
+        "label": "Line Height (Desktop)",
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "default": 1.5
+    },
+    {
+        "type": "range",
+        "id": "title_text_size_mobile",
+        "label": "Text Size (Mobile)",
+        "unit": "px",
+        "min": 7,
+        "max": 50,
+        "step": 1,
+        "default": 32
+    },
+    {
+        "type": "range",
+        "id": "title_line_height_mobile",
+        "label": "Line Height (Mobile)",
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "default": 1.5
+    },
+    {
+        "type": "header",
+        "content": "Our Logo"
+    },
+    {
+        "type": "inline_richtext",
+        "id": "us_logo_text",
+        "label": "Our logo Text",
+        "default": "Example"
+    },
+    {
+        "type": "range",
+        "id": "us_logo_font_weight",
+        "label": "Font Weight",
+        "min": 100,
+        "max": 900,
+        "step": 100,
+        "default": 600
+    },
+    {
+        "type": "range",
+        "id": "us_logo_text_size_desktop",
+        "label": "Text Size (Desktop)",
+        "unit": "px",
+        "min": 7,
+        "max": 50,
+        "step": 1,
+        "default": 18
+    },
+    {
+        "type": "range",
+        "id": "us_logo_line_height_desktop",
+        "label": "Line Height (Desktop)",
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "default": 1.5
+    },
+    {
+        "type": "range",
+        "id": "us_logo_text_size_mobile",
+        "label": "Text Size (Mobile)",
+        "unit": "px",
+        "min": 7,
+        "max": 50,
+        "step": 1,
+        "default": 14
+    },
+    {
+        "type": "range",
+        "id": "us_logo_line_height_mobile",
+        "label": "Line Height (Mobile)",
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "default": 1.5
+    },
+    {
+        "type": "image_picker",
+        "id": "us_logo",
+        "label": "Our Logo"
+    },
+    {
+        "type": "range",
+        "id": "us_logo_max_width_desktop",
+        "label": "Logo Max Width (Desktop)",
+        "unit": "px",
+        "min": 30,
+        "max": 150,
+        "step": 2,
+        "default": 150
+    },
+    {
+        "type": "range",
+        "id": "us_logo_max_width_mobile",
+        "label": "Logo Max Width (Mobile)",
+        "unit": "px",
+        "min": 30,
+        "max": 100,
+        "step": 2,
+        "default": 100
+    },
+    {
+        "type": "header",
+        "content": "Others Logo"
+    },
+    {
+        "type": "inline_richtext",
+        "id": "them_logo_text",
+        "label": "Them logo Text",
+        "default": "Others"
+    },
+    {
+        "type": "range",
+        "id": "them_logo_font_weight",
+        "label": "Font Weight",
+        "min": 100,
+        "max": 900,
+        "step": 100,
+        "default": 600
+    },
+    {
+        "type": "range",
+        "id": "them_logo_text_size_desktop",
+        "label": "Text Size (Desktop)",
+        "unit": "px",
+        "min": 7,
+        "max": 50,
+        "step": 1,
+        "default": 18
+    },
+    {
+        "type": "range",
+        "id": "them_logo_line_height_desktop",
+        "label": "Line Height (Desktop)",
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "default": 1.5
+    },
+    {
+        "type": "range",
+        "id": "them_logo_text_size_mobile",
+        "label": "Text Size (Mobile)",
+        "unit": "px",
+        "min": 7,
+        "max": 50,
+        "step": 1,
+        "default": 14
+    },
+    {
+        "type": "range",
+        "id": "them_logo_line_height_mobile",
+        "label": "Line Height (Mobile)",
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "default": 1.5
+    },
+    {
+        "type": "image_picker",
+        "id": "them_logo",
+        "label": "Them Logo"
+    },
+    {
+        "type": "range",
+        "id": "them_logo_max_width_desktop",
+        "label": "Logo Max Width (Desktop)",
+        "unit": "px",
+        "min": 30,
+        "max": 150,
+        "step": 2,
+        "default": 150
+    },
+    {
+        "type": "range",
+        "id": "them_logo_max_width_mobile",
+        "label": "Logo Max Width (Mobile)",
+        "unit": "px",
+        "min": 30,
+        "max": 100,
+        "step": 2,
+        "default": 100
+    },
+    {
+        "type": "range",
+        "id": "roundness",
+        "label": "Roundness",
+        "unit": "px",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "default": 10
+    },
+    {
+        "type": "header",
+        "content": "Colors"
+    },
+    {
+        "type": "color",
+        "id": "us_bg_color",
+        "label": "US Background Color",
+        "default": "#353956"
+    },
+    {
+        "type": "color",
+        "id": "us_text_color",
+        "label": "US Text Color",
+        "default": "#fff"
+    },
+    {
+        "type": "color",
+        "id": "them_bg_color",
+        "label": "Them Background Color",
+        "default": "#fff"
+    },
+    {
+        "type": "color",
+        "id": "them_text_color",
+        "label": "Them Text Color",
+        "default": "#353956"
+    },
+    {
+        "type": "color",
+        "id": "border_color",
+        "label": "Each Item Border Color",
+        "default": "#666c9e"
+    },
+    {
+        "type": "header",
+        "content": "Items Text Size"
+    },
+    {
+        "type": "range",
+        "id": "items_text_font_weight",
+        "label": "Font Weight",
+        "min": 100,
+        "max": 900,
+        "step": 100,
+        "default": 600
+    },
+    {
+        "type": "range",
+        "id": "items_text_size_desktop",
+        "label": "Text Size (Desktop)",
+        "unit": "px",
+        "min": 7,
+        "max": 50,
+        "step": 1,
+        "default": 18
+    },
+    {
+        "type": "range",
+        "id": "items_line_height_desktop",
+        "label": "Line Height (Desktop)",
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "default": 1.5
+    },
+    {
+        "type": "range",
+        "id": "items_text_size_mobile",
+        "label": "Text Size (Mobile)",
+        "unit": "px",
+        "min": 7,
+        "max": 50,
+        "step": 1,
+        "default": 16
+    },
+    {
+        "type": "range",
+        "id": "items_line_height_mobile",
+        "label": "Line Height (Mobile)",
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "default": 1.5
+    },
+    {
+        "type": "header",
+        "content": "Spacing"
+    },
+    {
+        "type": "range",
+        "id": "spacing_top_desktop",
+        "label": "Spacing Top (Desktop)",
+        "unit": "px",
+        "min": 0,
+        "max": 300,
+        "step": 5,
+        "default": 60
+    },
+    {
+        "type": "range",
+        "id": "spacing_bottom_desktop",
+        "label": "Spacing Bottom (Desktop)",
+        "unit": "px",
+        "min": 0,
+        "max": 300,
+        "step": 5,
+        "default": 60
+    },
+    {
+        "type": "range",
+        "id": "spacing_top_mobile",
+        "label": "Spacing Top (Mobile)",
+        "unit": "px",
+        "min": 0,
+        "max": 300,
+        "step": 5,
+        "default": 35
+    },
+    {
+        "type": "range",
+        "id": "spacing_bottom_mobile",
+        "label": "Spacing Bottom (Mobile)",
+        "unit": "px",
+        "min": 0,
+        "max": 300,
+        "step": 5,
+        "default": 35
+    }
+  ],
+  "blocks": [
+    {
+        "type": "item",
+        "name": "Item",
+        "settings": [
+            {
+                "type": "inline_richtext",
+                "id": "title",
+                "label": "Title",
+                "default": "Example Title"
+            },
+            {
+                "type": "checkbox",
+                "id": "us_checked",
+                "label": "US",
+                "default": true
+            },
+            {
+                "type": "checkbox",
+                "id": "them_checked",
+                "label": "Them",
+                "default": false
+            },
+            {
+                "type": "header",
+                "content": "Text Colors"
+            },
+            {
+                "type": "color",
+                "id": "background_color",
+                "label": "Background Color",
+                "default": "#fff"
+            },
+            {
+                "type": "color",
+                "id": "text_color",
+                "label": "Text Color",
+                "default": "#000"
+            },
+            {
+                "type": "header",
+                "content": "Us Colors"
+            },
+            {
+                "type": "color",
+                "id": "us_bg_color",
+                "label": "Us Background Color",
+                "default": "#666c9e"
+            },
+            {
+                "type": "color",
+                "id": "us_check_bg_color",
+                "label": "Us Icon Background",
+                "default": "#fff"
+            },
+            {
+                "type": "color",
+                "id": "us_check_color",
+                "label": "Us Icon Color",
+                "default": "#000"
+            },
+            {
+                "type": "header",
+                "content": "Them Colors"
+            },
+            {
+                "type": "color",
+                "id": "them_bg_color",
+                "label": "Them Background Color",
+                "default": "#fff"
+            },
+            {
+                "type": "color",
+                "id": "them_check_bg_color",
+                "label": "Them Icon Background",
+                "default": "#fff"
+            },
+            {
+                "type": "color",
+                "id": "them_check_color",
+                "label": "Them Icon Color",
+                "default": "#000"
+            }
+        ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Exceedios Table",
+      "blocks": [
+        {
+            "type": "item"
+        },
+        {
+            "type": "item"
+        },
+        {
+            "type": "item"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

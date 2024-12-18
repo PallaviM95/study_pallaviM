@@ -1,0 +1,106 @@
+<style>
+  h2{color:red;
+    padding-top:{{section.settings.padding-top}}px;
+    text-align:{{section.settings.head-alignment}};
+    }
+  .Main-Section{
+    padding-left:2%;
+  }
+</style>
+
+<div class="Main-Section">
+  <h2>{{ section.settings.FirstSection}}</h2>
+  <p class="paratext">
+    {% if section.settings.CheckboxType == true %}
+    {{ section.settings.ParaText}}
+    {% endif %}
+  </p>
+  <strong>{{ section.settings.radioBtn }}</strong>
+  <h1>
+    {% if section.settings.CountNum > 0%}
+    {{ section.settings.CountNum}}
+    {% endif %}
+  </h1>
+</div>
+
+{% schema %}
+{
+  "name":"Class1",
+  "settings": [
+    {
+      "type": "text",
+      "id": "FirstSection",
+      "label": "Heading"  
+    },
+    {
+      "type": "textarea",
+      "id":"ParaText",
+      "label": "Write Text",
+      "default":"Wite text of heading"
+    },
+    {
+      "type": "number",
+      "id": "CountNum",
+      "label":"Number",
+       "default":7
+    },
+    {
+      "type": "range",
+      "id": "padding-top",
+      "label": "Padding-Top",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default":10,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "head-alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "left-alignment"
+        },
+        {
+          "value": "center",
+          "label": "center-alignment"
+        },
+        {
+          "value": "right",
+          "label": "right-alignment"
+        }
+        
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "CheckboxType",
+      "label": "Paragrap show setting",
+      "default":true
+    },
+    {
+      "type": "radio",
+      "id": "radioBtn",
+      "label": "Review Product",
+      "options": [
+        {
+          "value": "Good product",
+          "label": "Good"
+        },
+        {
+          "value": "Bad product",
+          "label": "Bad"
+        }
+      ]
+    }
+  ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Class1"
+    }
+  ]
+}
+{% endschema %}

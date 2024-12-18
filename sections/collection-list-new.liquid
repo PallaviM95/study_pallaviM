@@ -1,0 +1,80 @@
+<style>
+  .collection-list-container-{{ section.id }}{
+    width:100vw;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 1fr;
+    gap:1rem;
+    box-sizing:border-box;
+    padding:2%;
+    
+  }
+
+  .collection-image-{{ section.id }}{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  
+</style>
+<div>
+  <h2 style="text-align:{{ section.settings.head-alignment }}; padding:1%; font-size:30px;">{{ section.settings.Collection-headings }}</h2>
+<div class="collection-list-container-{{ section.id }}">
+  {% for block in section.blocks %}
+  <a class="collection-link-{{ section.id }}" href="{{ block.settings.collection-url }}">
+    <img class="collection-image-{{ section.id }}" src="{{ block.settings.collection-image|img_url }}"/>
+  </a>
+  {% endfor %}
+</div>
+</div>
+
+
+{% schema %}
+  {
+    "name": "Collection List New",
+    "settings": [
+      {
+        "type": "text",
+         "id": "Collection-headings",
+         "label": "Collection Heading"
+      },
+      {
+      "type": "select",
+      "id": "head-alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "left-alignment"
+        },
+        {
+          "value": "center",
+          "label": "center-alignment"
+        }
+      ]
+    }
+    ],
+    "blocks": [
+      {
+        "type": "collection-list",
+        "name":"collection-block",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "collection-image",
+            "label": "Select Image"  
+          },
+          {
+            "type": "url",
+            "id": "collection-url",
+            "label": "Select Collection"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Collection List New"
+      }
+    ]
+  }
+{% endschema %}
